@@ -94,7 +94,6 @@ def adicionar_produto():
 
     return jsonify(dict(produto_criado)), 201
 
-
 @app.route('/produtos', methods=['GET'])
 def listar_produtos():
     """
@@ -121,7 +120,6 @@ def listar_produtos():
     
     conn.close()
     return jsonify([dict(p) for p in produtos])
-
 
 @app.route('/produtos/<int:produto_id>/estoque', methods=['PUT'])
 def alterar_estoque(produto_id):
@@ -177,7 +175,6 @@ def alterar_estoque(produto_id):
 
     return jsonify({'mensagem': 'Estoque atualizado com sucesso'}), 200
 
-
 @app.route('/movimentos', methods=['GET'])
 def listar_movimentos():
     """
@@ -202,6 +199,34 @@ def listar_movimentos():
     movimentos = conn.execute(query).fetchall()
     conn.close()
     return jsonify([dict(m) for m in movimentos])
+
+@app.route('/produtos/<int:produto_id>', methods=['DELETE'])
+def excluir_produto(produto_id):
+    """
+    Endpoint para excluir um produto pelo ID.
+    Retorna: Mensagem de sucesso ou erro.
+    """
+    conn = get_db_connection()
+    try:
+        # Verifica se o produto existe
+        produto = conn.execute('SELECT id FROM produtos WHERE id = ?', (produto_id,)).fetchone()
+        if not produto:
+            return jsonify({'erro': 'Produto não encontrado'}), 404
+
+        # Inicia uma transação
+        conn.execute('BEGIN')
+        # A exclusão em 'produtos' vai automaticamente apagar os registros
+        # em 'movimentos' graças ao FOREIGN KEY com ON DELETE CASCADE
+        conn.execute('DELETE FROM produtos WHERE id = ?', (produto_id,))
+        conn.commit()
+
+    except Exception as e:
+        conn.rollback()
+        return jsonify({'erro': str(e)}), 500
+    finally:
+        conn.close()
+
+    return jsonify({'mensagem': 'Produto excluído com sucesso'}), 200
 
 if __name__ == '__main__':
     # Roda o servidor. '0.0.0.0' torna o servidor acessível na sua rede local,

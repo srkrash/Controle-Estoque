@@ -85,4 +85,17 @@ class ProdutoService {
       return [];
     }
   }
+
+  // 5. Endpoint para excluir um produto (DELETE /produtos/<id>)
+  Future<bool> excluirProduto(int produtoId) async {
+    final url = Uri.parse('${await _baseUrl}/produtos/$produtoId');
+    final response = await http.delete(url);
+
+    if (response.statusCode == 200) {
+      return true;
+    } else {
+      print('Falha ao excluir produto: ${response.body}');
+      return false;
+    }
+  }
 }

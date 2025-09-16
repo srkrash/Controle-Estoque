@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../models/produto.dart';
 import '../services/produto_service.dart';
 import 'alterar_estoque_screen.dart';
-import 'barcode_scanner_screen.dart'; // Importe a tela do scanner
+import 'barcode_scanner_screen.dart';
 
 class ListaProdutosScreen extends StatefulWidget {
   const ListaProdutosScreen({super.key});
@@ -31,7 +31,6 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
     });
   }
 
-  // Novo método para abrir o scanner e buscar o produto
   void _abrirScannerParaBusca() async {
     final result = await Navigator.push(
       context,
@@ -41,6 +40,44 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
     if (result != null) {
       _searchController.text = result;
       _runSearch(result);
+    }
+  }
+
+  // Novo método para confirmar e excluir o produto
+  Future<void> _confirmarExclusao(Produto produto) async {
+    final confirmar = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Confirmar Exclusão'),
+          content: Text('Tem certeza que deseja excluir o produto "${produto.descricao}"?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancelar'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Excluir'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmar == true) {
+      bool sucesso = await _produtoService.excluirProduto(produto.id);
+      if (sucesso) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Produto excluído com sucesso!')),
+        );
+        // Recarrega a lista após a exclusão
+        _runSearch(_searchTerm);
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Erro ao excluir produto.')),
+        );
+      }
     }
   }
 
@@ -65,8 +102,8 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                   border: InputBorder.none,
                   hintStyle: TextStyle(color: Colors.grey),
                 ),
-                style: const TextStyle(color: Color.fromARGB(255, 99, 99, 99)),
-                cursorColor: const Color.fromARGB(255, 99, 99, 99),
+                style: const TextStyle(color: Color.fromARGB(255, 105, 105, 105)),
+                cursorColor: const Color.fromARGB(255, 105, 105, 105),
               ),
             ),
             IconButton(
@@ -118,9 +155,18 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                     subtitle: Text(
                       'Código: ${produto.codigoBarras}\nID: ${produto.id}',
                     ),
-                    trailing: Text(
-                      'Estoque: ${produto.quantidade}',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    trailing: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          'Estoque: ${produto.quantidade}',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        IconButton(
+                          icon: const Icon(Icons.delete, color: Color.fromARGB(255, 197, 79, 70)),
+                          onPressed: () => _confirmarExclusao(produto),
+                        ),
+                      ],
                     ),
                     onTap: () async {
                       final resultado = await Navigator.push(
@@ -130,9 +176,7 @@ class _ListaProdutosScreenState extends State<ListaProdutosScreen> {
                         ),
                       );
                       if (resultado == true) {
-                        setState(() {
-                          _futureProdutos = _produtoService.listarProdutos(searchTerm: _searchTerm);
-                        });
+                        _runSearch(_searchTerm);
                       }
                     },
                   ),
