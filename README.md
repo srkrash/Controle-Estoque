@@ -38,7 +38,18 @@ Siga os passos abaixo para colocar a aplicação em funcionamento.
       venv\Scripts\activate
       # No macOS/Linux:
       source venv/bin/activate
-  3. **Instale as Dependências do Python:**
+      ```
+   3. **Instale as Dependências do Python:**
      ```pip install -r requirements.txt```
-  4. **Inicialize o Banco de Dados:**
-# CONTINUA
+   4. **Execute a Aplicação Flask:**
+     ```python api.py```
+
+2. **Configuração do Frontend (Flutter)**
+   1. **Instale o Flutter SDK:** Siga as instruções no <a href=https://docs.flutter.dev/get-started/install>site oficial do Flutter</a>.
+   2. **Obtenha as Dependências do Projeto:**
+     ```
+     cd estoque
+     flutter pub get
+     ```
+   3. **Execute o Aplicativo Flutter:**
+      ```flutter run```
