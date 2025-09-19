@@ -1,6 +1,10 @@
 # 📦 Controle de Estoque (Flask + Flutter)
 Este é um projeto de exemplo de um aplicativo para controle de estoque, com um backend leve em Flask e um frontend multiplataforma em Flutter.
 
+## 📷 Imagens
+
+<img src='https://i.imgur.com/abViCI0.png'>  <img src='https://i.imgur.com/b0EkKHI.png'>  <img src='https://i.imgur.com/JWlYvNy.png'>  <img src='https://i.imgur.com/4XAs27y.png'>  <img src='https://i.imgur.com/VlEc1FI.png'>
+
 ## 🚀 Funcionalidades
 O aplicativo oferece as seguintes funcionalidades principais:
 - **Cadastro de Produtos:** Adição de novos produtos com código de barras, descrição e quantidade inicial.
@@ -47,9 +51,12 @@ Siga os passos abaixo para colocar a aplicação em funcionamento.
 2. **Configuração do Frontend (Flutter)**
    1. **Instale o Flutter SDK:** Siga as instruções no <a href=https://docs.flutter.dev/get-started/install>site oficial do Flutter</a>.
    2. **Obtenha as Dependências do Projeto:**
-     ```
-     cd estoque
-     flutter pub get
-     ```
+        ```
+        cd estoque
+        flutter pub get
+        ```
    3. **Execute o Aplicativo Flutter:**
       ```flutter run```
+
+## **📄 Licença**
+Este projeto está sob licença <a href='#'>MIT</a>
